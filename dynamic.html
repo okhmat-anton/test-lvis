@@ -1,0 +1,134 @@
+<script>
+
+    /*
+      Task: Find the minimum number of sticks to get the number K. Its possible use one stick several times.
+      Input: K, arraySticks
+      Output: minimum number of cuts or -1 if impossible
+
+      Solution Explanation:
+
+      So I was thinking about it all night (when sleep) and find solution
+
+      1. Check if possibles any errors in input data
+      2. use dynamic programming to find all possible variants
+      3. Return result
+     */
+
+    /*
+     dynamic programming to find all possible variants
+     return minCount or -1 if impossible
+     */
+    function getMinCountSticksDynamic(K, arraySticks) {
+        let arrayDynamicSticks = [];
+        for (let i = 0; i < arraySticks.length; i++) {
+            arrayDynamicSticks[i] = [];
+            for (let j = 0; j <= K; j++) {
+                arrayDynamicSticks[i][j] = 0;
+            }
+        }
+        for (let i = 0; i < arraySticks.length; i++) {
+            for (let j = 0; j <= K; j++) {
+                if (j === 0) {
+                    arrayDynamicSticks[i][j] = 0;
+                } else if (i === 0) {
+                    if (j % arraySticks[i] === 0) {
+                        arrayDynamicSticks[i][j] = j / arraySticks[i];
+                    } else {
+                        arrayDynamicSticks[i][j] = -1;
+                    }
+                } else {
+                    if (arraySticks[i] > j) {
+                        arrayDynamicSticks[i][j] = arrayDynamicSticks[i - 1][j];
+                    } else {
+                        if (arrayDynamicSticks[i - 1][j] === -1) {
+                            if (arrayDynamicSticks[i][j - arraySticks[i]] === -1) {
+                                arrayDynamicSticks[i][j] = -1;
+                            } else {
+                                arrayDynamicSticks[i][j] = arrayDynamicSticks[i][j - arraySticks[i]] + 1;
+                            }
+                        } else {
+                            if (arrayDynamicSticks[i][j - arraySticks[i]] === -1) {
+                                arrayDynamicSticks[i][j] = arrayDynamicSticks[i - 1][j];
+                            } else {
+                                arrayDynamicSticks[i][j] = Math.min(arrayDynamicSticks[i - 1][j], arrayDynamicSticks[i][j - arraySticks[i]] + 1);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return arrayDynamicSticks[arraySticks.length - 1][K];
+    }
+
+    function getMinCountSticks(K, arraySticks) {
+        // check if K < 1 || K>10000 - can't be
+        if (K < 1 || K > 10000) {
+            return -1;
+        }
+        // check if K is in array
+        if (arraySticks.includes(K)) {
+            return 1;
+        }
+        // check if arraySticks is empty
+        if (arraySticks.length < 1) {
+            return -1;
+        }
+        
+        // delete from array all numbers > K or < 1
+        for (let i = 0; i < arraySticks.length; i++) {
+            if (arraySticks[i] > K || arraySticks[i] < 1) {
+                arraySticks.splice(i, 1);
+                i--;
+            }
+        }
+        // delete from array all numbers that repeat
+        for (let i = 0; i < arraySticks.length; i++) {
+            for (let j = i + 1; j < arraySticks.length; j++) {
+                if (arraySticks[i] === arraySticks[j]) {
+                    arraySticks.splice(j, 1);
+                    j--;
+                }
+            }
+        }
+        //sort array from max to min
+        arraySticks.sort(function (a, b) {
+            return b - a;
+        });
+
+        // use dynamic programming to find all possible variants
+        return getMinCountSticksDynamic(K, arraySticks);
+
+    }
+
+
+    let K = 13; // 1 <= K <= 10000
+    let arraySticks = [1, 5, 5, 1, 234, 234, 234, 2233, 0, -1, -3, 2223, 232, 23]; // 1 <= arraySticks[i] <= 100000 , count in array N
+
+    console.log(getMinCountSticks(K, arraySticks));
+
+    K = 13;
+    arraySticks = [1, 5, 12]; // 1 <= arraySticks[i] <= 100000 , count in array N
+
+    console.log(getMinCountSticks(K, arraySticks));
+
+    K = 68;
+    arraySticks = [1, 14, 30, 17]; // 1 <= arraySticks[i] <= 100000 , count in array N
+
+    console.log(getMinCountSticks(K, arraySticks));
+
+    K = 109;
+    arraySticks = [13, 17, 43, 100, 110, 120, -100]; // 1 <= arraySticks[i] <= 100000 , count in array N
+
+    console.log(getMinCountSticks(K, arraySticks));
+
+    K = 10000; // 1 <= K <= 1000
+    let N = 100;
+    arraySticks = [];
+    for (let i = 0; i < N; i++) {
+        // push random number from 1 to 100000
+        arraySticks.push(Math.floor(Math.random() * 100000) + 1);
+    }
+    console.log(K);
+    console.log(arraySticks);
+    console.log(getMinCountSticks(K, arraySticks));
+</script>
