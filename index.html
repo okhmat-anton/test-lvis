@@ -1,123 +1,167 @@
 <script>
-  /*
-   Start 5:55 PM 03/27/2023
-   End 7:32 PM 03/27/2023
-   */
+    /*
+     Start 5:55 PM 03/27/2023
+     End 7:32 PM 03/27/2023
+     */
 
 
-  /*
-      Task: Find the minimum number of sticks to get the number K. Its possible use one stick several times.
-      Input: K, arraySticks
-      Output: minimum number of cuts or -1 if impossible
+    /*
+        Task: Find the minimum number of sticks to get the number K. Its possible use one stick several times.
+        Input: K, arraySticks
+        Output: minimum number of cuts or -1 if impossible
 
-      Solution Explanation:
-      1. Check if possibles any errors in input data
-      2. Check variants that can not be solved without recursion (K in arraySticks)
-      3. Check can we divide K on any number in arraySticks - and setup maximum count of recursion
-      4. Minus from K the biggest number in arraySticks in recursion till we have 0 or less
-      and cut deep if we have count recursion > current of minCount (but only if we already have minCount > 0)
-      5. Return result
+        Solution Explanation:
+        1. Check if possibles any errors in input data
+        2. Check variants that can not be solved without recursion (K in arraySticks)
+        3. Check can we divide K on any number in arraySticks - and setup maximum count of recursion
+        4. Minus from K the biggest number in arraySticks in recursion till we have 0 or less
+        and cut deep if we have count recursion > current of minCount (but only if we already have minCount > 0)
+        5. Return result
 
-      Solution not maybe optimal, but it's the first thing that came to mind
+        Solution not maybe optimal, but it's the first thing that came to mind
 
-   */
+     */
 
-
-  // global var for recursion
-  let minCount = 0;
-
-  // calculate minCount in recursion
-  function getMinCountRecursion(K, arraySticks, count) {
-    count++;
-    // because we need to find min count, if count > maxCount - we can stop recursion with false
-    if (minCount > 0 && count > minCount) {
-      // console.log('STOP recursion ', count,'>', minCount);
-      return -1;
-    }
-
-    for(let i=0; i<arraySticks.length; i++) {
-      let newK = K - arraySticks[i];
-      // console.log('L', count,' newK ==> ',  K+ '-'+ arraySticks[i]+ '='+ newK, 'minCount', minCount)
-      if(newK === 0) { // if we found min count
-        if(count < minCount || minCount < 1) {
-          minCount = count;
-          // console.log('find = ',minCount);
-        }
-        return;
-      }
-      if(newK < 0) { // not work for us
-        // console.log('STOP BAD recursion newK < 0',newK, K, count, minCount);
-        continue;
-      }
-      if(newK > 0) { // continue recursion
-
-        // make copy of array
-        let arraySticksCopy = arraySticks.slice();
-        // delete from array all numbers > newK
-        for (let j = 0; j < arraySticksCopy.length; j++) {
-          if (arraySticksCopy[j] > newK) {
-            arraySticksCopy.splice(j, 1);
-            j--;
-          }
-        }
-        getMinCountRecursion(newK, arraySticksCopy, count);
-      }
-    }
-  }
-
-  function getMinCountSticks(K, arraySticks) {
-    minCount = 0; // reset global var
-    // check if K < 1 || K>10000 - can't be
-    if (K<1 || K>10000) {
-      return -1;
-    }
-    // check if K is in array
-    if (arraySticks.includes(K)) {
-      return 1;
-    }
-    // delete from array all numbers > K or < 1
-    for (let i = 0; i < arraySticks.length; i++) {
-      if (arraySticks[i] > K || arraySticks[i] < 1) {
-        arraySticks.splice(i, 1);
-        i--;
-      }
-    }
-    //sort array from max to min
-    arraySticks.sort(function(a, b) {
-      return b - a;
-    });
-
-    // check if its possible divide K by any number in array and save min count
-    for (let i = 0; i < arraySticks.length; i++) {
-      if (K % arraySticks[i] === 0) {
-        minCount = K / arraySticks[i];
-        break; // only biggest number, can be many variants that can divide K
-      }
-    }
+    // global var for recursion
+    let minCount = 0;
 
     // calculate minCount in recursion
-    getMinCountRecursion(K, arraySticks, 0);
+    function getMinCountRecursion(K, arraySticks, count) {
+        count++;
+        // because we need to find min count, if count > maxCount - we can stop recursion with false
+        if (minCount > 0 && count > minCount) {
+            // console.log('STOP recursion ', count,'>', minCount);
+            return -1;
+        }
 
-    if (minCount > 0) {
-      return minCount;
+        for (let i = 0; i < arraySticks.length; i++) {
+            let newK = K - arraySticks[i];
+            // console.log('L', count,' newK ==> ',  K+ '-'+ arraySticks[i]+ '='+ newK, 'minCount', minCount)
+            if (newK === 0) { // if we found min count
+                if (count < minCount || minCount < 1) {
+                    minCount = count;
+                    // console.log('find new minCount = ',minCount);
+                }
+                return;
+            }
+            if (newK < 0) { // not work for us
+                // console.log('STOP BAD recursion newK < 0',newK, K, count, minCount);
+                continue;
+            }
+            if (newK > 0) { // continue recursion
+
+                // make copy of array
+                let arraySticksCopy = arraySticks.slice();
+                // delete from array all numbers > newK
+                for (let j = 0; j < arraySticksCopy.length; j++) {
+                    if (arraySticksCopy[j] > newK) {
+                        arraySticksCopy.splice(j, 1);
+                        j--;
+                    }
+                }
+                getMinCountRecursion(newK, arraySticksCopy, count);
+            }
+        }
     }
-    return -1;
-  }
+
+    function getMinCountSticks(K, arraySticks) {
+        minCount = 0; // reset global var
+        // check if K < 1 || K>10000 - can't be
+        if (K < 1 || K > 10000) {
+            return -1;
+        }
+        // check if K is in array
+        if (arraySticks.includes(K)) {
+            return 1;
+        }
+        // check if arraySticks is empty
+        if (arraySticks.length < 1) {
+            return -1;
+        }
+
+        // check what if sum of arraySticks = K it can be minCount that can be used for max recursion deep
+        let sum = 0;
+        for (let i = 0; i < arraySticks.length; i++) {
+            sum += arraySticks[i];
+        }
+        if (sum === K) {
+            minCount = arraySticks.length;
+        }
+
+        // delete from array all numbers > K or < 1
+        for (let i = 0; i < arraySticks.length; i++) {
+            if (arraySticks[i] > K || arraySticks[i] < 1) {
+                arraySticks.splice(i, 1);
+                i--;
+            }
+        }
+        // delete from array all numbers that repeat
+        for (let i = 0; i < arraySticks.length; i++) {
+            for (let j = i + 1; j < arraySticks.length; j++) {
+                if (arraySticks[i] === arraySticks[j]) {
+                    arraySticks.splice(j, 1);
+                    j--;
+                }
+            }
+        }
+        //sort array from max to min
+        arraySticks.sort(function (a, b) {
+            return b - a;
+        });
+
+        // check if its possible divide K by any number in array and save min count
+        for (let i = 0; i < arraySticks.length; i++) {
+            if (K % arraySticks[i] === 0) {
+                if(minCount>0){
+                    minCount = Math.min(minCount, K / arraySticks[i]); // save only if smaller
+                }else{
+                    minCount = K / arraySticks[i];
+                }
+                break; // only biggest number, can be many variants that can divide K
+            }
+        }
+
+        // calculate minCount in recursion
+        getMinCountRecursion(K, arraySticks, 0);
+
+        if (minCount > 0) {
+            return minCount;
+        }
+        return -1;
+    }
 
 
-  let K = 13; // 1 <= K <= 1000
-  let arraySticks = [1, 5, 12]; // 1 <= arraySticks[i] <= 100000 , count in array N
+    let K = 13; // 1 <= K <= 10000
+    let arraySticks = [1, 5, 5, 1, 234, 234, 234, 2233, 0, -1, -3, 2223, 232, 23]; // 1 <= arraySticks[i] <= 100000 , count in array N
 
-  console.log(getMinCountSticks(K, arraySticks));
+    console.log(getMinCountSticks(K, arraySticks));
 
-  K = 68; // 1 <= K <= 1000
-  arraySticks = [1, 14, 30, 17]; // 1 <= arraySticks[i] <= 100000 , count in array N
+    K = 13;
+    arraySticks = [1, 5, 12]; // 1 <= arraySticks[i] <= 100000 , count in array N
 
-  console.log(getMinCountSticks(K, arraySticks));
+    console.log(getMinCountSticks(K, arraySticks));
 
-  K = 109; // 1 <= K <= 1000
-  arraySticks = [13, 17, 43, 100, 110, 120, -100]; // 1 <= arraySticks[i] <= 100000 , count in array N
+    K = 68;
+    arraySticks = [1, 14, 30, 17]; // 1 <= arraySticks[i] <= 100000 , count in array N
 
-  console.log(getMinCountSticks(K, arraySticks));
+    console.log(getMinCountSticks(K, arraySticks));
+
+    K = 109;
+    arraySticks = [13, 17, 43, 100, 110, 120, -100]; // 1 <= arraySticks[i] <= 100000 , count in array N
+
+    console.log(getMinCountSticks(K, arraySticks));
+
+    // memory test
+    // K = 1000; // 1 <= K <= 1000
+    // let N = 100;
+    // // fill test array with random numbers from 1 to N (1 <= arraySticks[i] <= 100000)
+    // arraySticks = [];
+    // for (let i = 0; i < N; i++) {
+    //     arraySticks.push(Math.floor(Math.random() * N) + 1);
+    // }
+    // console.log(K);
+    // console.log(arraySticks);
+    // console.log(getMinCountSticks(K, arraySticks));
+
 
 </script>
