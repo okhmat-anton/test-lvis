@@ -1,0 +1,47 @@
+<script>
+    function getMinCountSticks(K, numbers) {
+        const n = numbers.length;
+        const dynamic = Array(K + 1).fill(Infinity);
+
+        dynamic[0] = 0;
+
+        for (let i = 1; i <= K; i++) {
+            for (let j = 0; j < n; j++) {
+                if (i >= numbers[j]) {
+                    dynamic[i] = Math.min(dynamic[i], dynamic[i - numbers[j]] + 1);
+                }
+            }
+        }
+
+        let result = dynamic[K] === Infinity ? -1 : dynamic[K];
+        return isNaN(result) ? -1 : result;
+    }
+
+    let K = 13;
+    let arraySticks = [1, 5, 12]; // 1 <= arraySticks[i] <= 100000 , count in array N
+
+    console.log(getMinCountSticks(K, arraySticks));
+
+    K = 68;
+    arraySticks = [1, 14, 30, 17]; // 1 <= arraySticks[i] <= 100000 , count in array N
+
+    console.log(getMinCountSticks(K, arraySticks));
+
+    K = 109;
+    arraySticks = [13, 17, 43, 100, 110, 120, -100]; // 1 <= arraySticks[i] <= 100000 , count in array N
+
+    console.log(getMinCountSticks(K, arraySticks));
+
+    // max version
+
+    K = 9999; // 1 <= K <= 1000
+    let N = 10000;
+    arraySticks = [];
+    for (let i = 0; i < N; i++) {
+        // push random number from 1 to 100000
+        arraySticks.push(Math.floor(Math.random() * 100000) + 1);
+    }
+    console.log(K);
+    console.log(arraySticks);
+    console.log(getMinCountSticks(K, arraySticks));
+</script>
